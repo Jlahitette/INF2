@@ -1,0 +1,132 @@
+import os
+import PIL.Image
+
+##question 1 : CLASS NOTE
+
+class Note:
+    def __init__(self, titre):
+        self.titre = titre
+
+    @property
+    def titre(self):
+        return self._titre
+
+    @titre.setter
+    def titre(self,val):
+        if not type(val)==str:
+            raise TypeError("Le type de titre doit etre un str")
+        self._titre = val
+        
+    
+    def print(self):
+        print(f' Titre : {self.titre}')
+
+
+##question2 : CLASS ARTICLE 
+
+class Article(Note) :
+    def __init__(self, titre, texte):
+        Note.__init__(self,titre)
+        self.texte = texte
+
+    
+    @property
+    def texte(self):
+        return self._texte
+
+    @texte.setter
+    def texte(self,val):
+        if not type(val)==str:
+            raise TypeError("Le type de texte doit etre un str")
+        self._texte = val
+    
+    
+    def print(self):
+        super().print
+        print(f' Texte : {self.texte}')
+
+
+##question3 : CLASS IMAGE
+
+class Image(Note):
+    def __init__(self, titre, description, chemin):
+        Note.__init__(self,titre)
+        self.description = description
+        self.chemin = chemin
+        
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self,val):
+        if not type(val)==str:
+            raise TypeError("Le type de description doit etre un str")
+        self._description = val
+    
+    @property
+    def chemin(self):
+        return self._chemin
+
+    @chemin.setter
+    def chemin(self,val):
+        if not type(val)==str:
+            raise TypeError("Le chemin de texte doit etre un str")
+        if not os.path.isfile(val):
+            raise FileNotFoundError("le fichier n'existe pas dans le repertoire")
+        self._chemin = val
+
+    def print(self):
+        Note.print(self)
+        print(f' Description : {self.description}')
+        image=PIL.Image.open(self.chemin)
+        image.show()
+
+##question4 : CLASS DOCUMENT
+
+class Document(Note):
+    def __init__(self,titre):
+        super().__init__(titre)
+        self._notes=[]
+
+    #pas besoin de getters et setters car pour modifier la liste on utilise ajouter_note et supprimer_note
+    
+    def ajouter_note(self,note):
+        if not isinstance(note, Note):
+            raise TypeError("La note passé en parametre nest pas de la classe Note")
+        self._notes.append(note)
+
+    def supprimer_note(self,note):
+        if not note in self._notes:
+            raise ValueError("La valeure nest pas dans la liste")
+        self._notes.remove(note)
+
+    def print(self):
+        super().print()
+        for n in self._notes:
+            n.print() #utilise les methodes print de Note si cest une Note, d'Article si cest un Article, etc..
+
+## Programme principal
+
+def main():
+    note1=Note("Notes INF2")
+    #note1.print()
+    
+    article1=Article("Notes INF2", "Premier exercice d'info ")
+    #article1.print()
+    article2=Article("Notes INF2", "Deuxieme exercice d'info")
+
+    #image1=Image("Notes INF2","Image d'un exemple de code","chemin") #ici ca marche pas sur Ipad mais a tester sur ordi
+    #image1.print()
+
+    doc1=Document("mon_cahier")
+    doc1.ajouter_note(article1)
+    doc1.ajouter_note(article2)
+    doc1.print()
+
+    print("------On supprime article 2------")
+    
+    doc1.supprimer_note(article2)
+    doc1.print()
+    
+x=main()
