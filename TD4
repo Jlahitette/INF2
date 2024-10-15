@@ -1,0 +1,128 @@
+class Sommet:
+    _nb_sommets = 0
+    def __init__(self,id):
+        if id.__hash__==None:
+            raise TypeError("Le sommet doit etre hashable")
+        
+        self._id = id
+        Sommet._nb_sommets += 1
+
+    
+    @property
+    def id(self):
+        return self._id
+
+    def __str__(self):
+        return f"L'id du sommet est : {self.id}"
+
+    @classmethod
+    def get_nb_sommets(cls):
+        return cls._nb_sommets
+
+    def __del__(self):
+        Sommet._nb_sommets -= 1
+
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self,other):
+        if not isinstance(other, Sommet):
+            raise TypeError("Ce n'est pas un Sommet")
+        return hash(self.id)==hash(other.id)
+            
+
+
+class Graphe:
+    def __init__(self,nom):
+        self._nom = nom
+        self._succ = {}
+    
+    @property
+    def nom(self):
+        return self._nom
+
+    def n_sommets(self):
+        return len(self._succ)
+
+    def n_arcs(self):
+        somme_arcs=0
+        for sommet in self._succ:
+            somme_arcs += len(self._succ[sommet])
+            return somme_arcs
+
+    def __str__(self):
+        graphe = (f"Nom du graphe : {self.nom}. Nombre sommets : {self.n_sommets}. Nombre d'arcs : {self.n_arcs}.")
+        for sommet in self._succ:
+            print(f" Sommet : {sommet} Liste de ses successeurs : {self._succ[sommet]}")
+
+    def __iadd__(self,var):
+        if isinstance(var,Sommet):
+            if var not in self._succ:
+                self._succ[var] = []
+            return self
+
+        elif isinstance(var,tuple) and len(var)==2:
+            s1,s2 = var
+            if not isinstance(s1,Sommet) or not isinstance(s2,Sommet):
+                raise ValueError("elements du tuple doievent etre des sommets")
+                
+             # Ajouter les sommets au graphe s'ils n'existent pas encore
+            if s1 not in self._succ:
+                self._succ[s1] = []
+            if s2 not in self._succ:
+                self._succ[s2] = []
+
+            # Ajouter l'arc entre les deux sommets (s1 -> s2) si l'arc n'existe pas encore
+            if s2 not in self._succ[s1]:
+                self._succ[s1].append(s2)
+
+            return self
+
+        # Si var n'est ni un sommet ni un tuple de deux sommets, lever une exception
+        else:
+            raise TypeError("L'élément à ajouter doit être un 'Sommet' ou un couple de 'Sommets'")
+
+# Exemple d'utilisation
+def main():
+    try: 
+        n1 = Sommet("INF2")
+        n2 = Sommet(26)
+        n3 = Sommet("INF1") 
+        n4 = Sommet([3,4,5])
+        g = Graphe("Mon Graphe")
+        
+        # Ajout de sommets
+        g += n1
+        g += n2
+
+        # Ajout d'un arc entre deux sommets
+        g += (n1,n3)
+
+        # Tentative d'ajout d'un élément invalide
+        # g += "not_a_sommet"  # Déclencherait une exception
+
+        print(g.__str__)  # Affichage du graphe
+
+        
+    except TypeError as erreure:    
+        print(n1==n3)
+        #print(n4.__hash__)
+        print("Sommets crées :")
+        print(f" Nombre de sommets : {Sommet.get_nb_sommets()}")
+        print(erreure)
+
+    else:
+        print("Sommets crées :")
+        print(f"Nombre de sommets : {Sommet.get_nb_sommets()}") # 3 
+        del(n2) 
+        print(f"Nombre de sommets : {Sommet.get_nb_sommets()}") # 2
+        
+    finally :
+        print("Continuez")
+        
+
+
+
+    
+
+x = main()
