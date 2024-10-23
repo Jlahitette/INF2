@@ -1,0 +1,46 @@
+import math
+
+
+def pi(chemin: str) -> list[int]:
+    resultat = []
+    with open(chemin, 'r', encoding='utf-8') as fichier:
+        contenu = fichier.read()
+
+        ponctuation = '''.!',?\n'''
+
+        for caractere in contenu:
+            if caractere in ponctuation:
+                contenu = contenu.replace(caractere, ' ')
+
+        champs = contenu.split()
+
+        for i in range(len(champs)):
+            length_mot = len(champs[i])
+            if len(champs[i]) > 9:
+                length_mot = len(champs[i]) % 10
+            resultat.append(length_mot)
+
+    return resultat
+
+def ecrire_pi(vals_de_pi : list[int]):
+    with open("fichier_pi.txt",'x') as fichier:
+        contenu = ''
+        for i in range(len(vals_de_pi)):
+            if i==0:
+                contenu += str(vals_de_pi[i])
+                contenu += ','
+            else:
+                contenu += str(vals_de_pi[i])
+
+        fichier.write(contenu)
+
+def main():
+    liste_val_pi = pi("poeme.txt")
+    print(f"Valeurs de pi trouvées avec le poem: {liste_val_pi}")
+    #On compare les premieres valeurs aux valeurs de pi connus dans "math.pi"
+    print(f"Valeurs de pi trouvées avec math.pi :{math.pi}")
+
+    ecrire_pi(liste_val_pi)
+    #provoque la creation d'un fichier nommé "fichier_pi.txt" qui contient le nombre de pi trouvé
+
+x=main()
