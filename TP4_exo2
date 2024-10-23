@@ -1,0 +1,62 @@
+class Etudiant:
+
+
+    def __init__(self, nom: str, annee_naissance: int, gpa: float, connais_python: bool):
+        self._nom = nom
+        self._annee_naissance = annee_naissance
+        self._gpa = gpa
+        self._connais_python = connais_python
+
+
+    @property
+    def nom(self) -> str:
+        return self._nom
+
+    @property
+    def annee_naissance(self) -> int:
+        return self._annee_naissance
+
+    @annee_naissance.setter
+    def annee_naissance(self, val : int):
+        if type(val)!=int:
+            raise TypeError("L'annee de naissance doit etre un int")
+        self._annee_naissance = val
+
+    @property
+    def gpa(self) -> float:
+        return self._gpa
+
+    @gpa.setter
+    def gpa(self, val: float):
+        if type(val) != float:
+            raise TypeError("Le GPA doit etre un float")
+        self._gpa = val
+
+    @property
+    def connais_python(self) -> bool:
+        return self._connais_python
+
+    @connais_python.setter
+    def connais_python(self, val: bool):
+        if type(val) != bool:
+            raise TypeError("Le fait que l'eleve conaisse Python ou non doit etre un bool")
+        self._connais_python = val
+
+
+    def to_dict(self) -> dict:
+        dico_etudiant: dict = {}
+        dico_etudiant[self]=self.nom,self.annee_naissance,self.gpa,self.connais_python
+        return dico_etudiant
+
+class Groupe(Etudiant):
+    def __init__(self):
+        self.etudiants = []
+
+
+
+def main():
+
+    etudiant1 = Etudiant("Alice", 2000, 3.8, True)
+    print(etudiant1.to_dict())
+
+main()
